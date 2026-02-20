@@ -1,7 +1,8 @@
 'use strict';
 
-const CACHE  = 'aiseg2-v5';
-const STATIC = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json'];
+const CACHE  = 'aiseg2-v6';
+const STATIC = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json',
+                '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
