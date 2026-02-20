@@ -1,0 +1,632 @@
+/* ── Reset & base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f172a;
+  --card:     #1e293b;
+  --border:   #334155;
+  --text:     #f1f5f9;
+  --muted:    #94a3b8;
+  --solar:    #f59e0b;
+  --ene:      #a855f7;
+  --use:      #60a5fa;
+  --buy:      #f87171;
+  --sell:     #34d399;
+  --radius:   14px;
+  --gap:      12px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px env(safe-area-inset-top, 0) 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-clock {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status dot */
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--muted);
+  transition: background 0.4s;
+}
+.status-dot.live {
+  background: var(--sell);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--sell) 60%, transparent);
+  animation: pulse 2.5s infinite;
+}
+.status-dot.offline { background: var(--buy); }
+
+@keyframes pulse {
+  0%  { box-shadow: 0 0 0 0   color-mix(in srgb, var(--sell) 60%, transparent); }
+  70% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--sell) 0%,  transparent); }
+  100%{ box-shadow: 0 0 0 0   color-mix(in srgb, var(--sell) 0%,  transparent); }
+}
+
+/* ── Main layout ────────────────────────────────────────────────────────────── */
+main {
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: calc(var(--gap) + env(safe-area-inset-bottom, 0));
+}
+
+/* ── Card ───────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Color helpers ──────────────────────────────────────────────────────────── */
+.solar-color { color: var(--solar); }
+.ene-color   { color: var(--ene);   }
+.use-color   { color: var(--use);   }
+.buy-color   { color: var(--buy);   }
+.sell-color  { color: var(--sell);  }
+.muted       { color: var(--muted); font-weight: 400; text-transform: none; font-size: 11px; }
+
+/* ── Flow card ──────────────────────────────────────────────────────────────── */
+.flow-grid {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: 8px;
+  align-items: center;
+  min-height: 140px;
+}
+
+.flow-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flow-kw {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--solar);
+  line-height: 1;
+}
+
+.use-col .flow-kw { color: var(--use); }
+
+.flow-kw-unit {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.flow-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.flow-source {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.src-icon  { font-size: 14px; }
+.src-name  { color: var(--muted); flex: 1; }
+.src-val   { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px; }
+
+/* Center arrow column */
+.flow-arrow-col {
+  align-items: center;
+  justify-content: center;
+}
+
+.flow-arrow-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.flow-arrow {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  transition: color 0.5s;
+}
+.flow-arrow.sell { color: var(--sell); }
+.flow-arrow.buy  { color: var(--buy);  transform: scaleX(-1); }
+
+.flow-grid-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.flow-grid-label.sell-color { color: var(--sell); }
+.flow-grid-label.buy-color  { color: var(--buy);  }
+
+/* Top consumers list */
+.flow-top-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.top-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+}
+.top-item .top-name { color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-item .top-watts { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+.skeleton { color: var(--muted); font-size: 12px; }
+
+/* ── Totals card ────────────────────────────────────────────────────────────── */
+.totals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.total-tile {
+  background: color-mix(in srgb, var(--bg) 60%, var(--card));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.tile-icon  { font-size: 22px; line-height: 1.2; }
+.tile-label { font-size: 11px; color: var(--muted); }
+.tile-val   { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+.tile-unit  { font-size: 11px; color: var(--muted); }
+
+/* ── Circuits card ──────────────────────────────────────────────────────────── */
+.pill-btn {
+  background: var(--border);
+  border: none;
+  color: var(--text);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.pill-btn:hover { background: color-mix(in srgb, var(--border) 70%, var(--text)); }
+.pill-btn:disabled { opacity: 0.5; cursor: default; }
+
+.circuits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.circuit-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 2px 0;
+}
+
+.circuit-name {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.circuit-kwh {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.circuit-bar-wrap {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 2px;
+}
+
+.circuit-bar {
+  height: 100%;
+  background: var(--use);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.circuits-msg {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* ── Flash animation (when a live value changes) ────────────────────────────── */
+@keyframes flash-update {
+  0%   { opacity: 1; }
+  25%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+.flash { animation: flash-update 0.35s ease-out; }
+
+/* ── Tab bar ────────────────────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.tab-btn.active {
+  color: var(--text);
+  border-bottom-color: var(--use);
+}
+
+/* ── Tab content ─────────────────────────────────────────────────────────────── */
+.tab-content.hidden { display: none; }
+
+/* ── Device grid ────────────────────────────────────────────────────────────── */
+.device-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.device-card {
+  background: color-mix(in srgb, var(--bg) 50%, var(--card));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.3s;
+}
+
+.device-card.running {
+  border-color: var(--sell);
+}
+
+.device-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.device-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  display: inline-block;
+  width: fit-content;
+  background: var(--border);
+  color: var(--muted);
+}
+
+.device-status.on {
+  background: color-mix(in srgb, var(--sell) 20%, transparent);
+  color: var(--sell);
+}
+
+.device-info {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  min-height: 30px;
+}
+
+.device-btn {
+  margin-top: 2px;
+  background: var(--border);
+  border: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.device-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--use) 30%, var(--border));
+}
+
+.device-btn.stop-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--buy) 30%, var(--border));
+}
+
+.device-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.device-placeholder {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Full-width device card (for enefarm items with more space) */
+.device-card.wide {
+  grid-column: 1 / -1;
+}
+
+/* ── AC card — always full-width in the device grid ────────────────────────── */
+.ac-card {
+  grid-column: 1 / -1;
+  gap: 8px;
+}
+
+/* ── AC card header (stacked rows) ─────────────────────────────────────────── */
+.ac-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ac-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ac-info-line {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Current temperature badge beside the status pill */
+.ac-temp-badge {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--solar);
+}
+
+/* ── AC button row (toggle + expand icon) ───────────────────────────────────── */
+.ac-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ac-btn-row .device-btn {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+}
+
+/* ── Small icon buttons (rename ✏️, expand ⚙) ──────────────────────────────── */
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.icon-btn:hover {
+  background: color-mix(in srgb, var(--border) 80%, transparent);
+  color: var(--text);
+}
+
+.expand-btn.active {
+  background: color-mix(in srgb, var(--use) 20%, transparent);
+  border-color: var(--use);
+  color: var(--use);
+}
+
+.rename-btn { font-size: 14px; }
+
+/* ── Expanded AC controls panel ─────────────────────────────────────────────── */
+.ac-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.ac-ctrl-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ctrl-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  width: 36px;
+  flex-shrink: 0;
+}
+
+/* ── Segmented control (mode / fan speed) ───────────────────────────────────── */
+.seg-group {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+/* Scrollable variant for the fan row (7 items don't always fit) */
+.seg-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.seg-scroll::-webkit-scrollbar { display: none; }
+.seg-scroll .seg-btn { flex-shrink: 0; }
+
+.seg-btn {
+  flex: 1;
+  min-width: 40px;
+  background: var(--border);
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.seg-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--use) 25%, var(--border));
+  color: var(--text);
+}
+
+.seg-btn.active {
+  background: var(--use);
+  color: #fff;
+}
+
+.seg-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── Temperature / level +/− control ───────────────────────────────────────── */
+.temp-ctrl,
+.level-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.temp-btn {
+  background: var(--border);
+  border: none;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.temp-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--use) 35%, var(--border));
+}
+
+.temp-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.temp-val {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  text-align: center;
+  color: var(--text);
+}
+
+/* ── Responsive tweaks ──────────────────────────────────────────────────────── */
+@media (min-width: 420px) {
+  .flow-kw        { font-size: 46px; }
+  .src-val        { font-size: 14px; }
+  .tile-val       { font-size: 28px; }
+  .top-item       { font-size: 13px; }
+}
